@@ -232,10 +232,6 @@ export class BunTestController implements vscode.Disposable {
         parent.uri
       );
 
-      if (testId.includes('tests skipped')) {
-        this.log.info(`skipped test:`, test);
-      }
-
       if (location) {
         testItem.range = new vscode.Range(
           location.range.start,
