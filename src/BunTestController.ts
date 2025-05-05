@@ -252,7 +252,7 @@ export class BunTestController implements vscode.Disposable {
     token: vscode.CancellationToken,
     isDebug: boolean
   ): Promise<void> {
-    this.log.info(`Running handler`, request.include);
+    this.log.info(`runHandler:`, request.include);
     const run = this.testController.createTestRun(request);
 
     token.onCancellationRequested(() => {
@@ -264,8 +264,11 @@ export class BunTestController implements vscode.Disposable {
 
     // If specific tests are specified to run
     if (request.include) {
+      const testLabels = request.include.map(test => test.label);
+      this.log.info(`running specific tests:`, testLabels);
       request.include.forEach(test => queue.push(test));
     } else {
+      this.log.info(`running all discovered tests:`, this.testController.items.size);
       // Run all discovered tests
       this.testController.items.forEach(test => queue.push(test));
     }
@@ -281,7 +284,10 @@ export class BunTestController implements vscode.Disposable {
     const testsByFile = new Map<string, vscode.TestItem[]>();
 
     for (const test of queue) {
-      if (!test.uri) continue;
+      if (!test.uri) {
+        this.log.error('runHandler: test item has no URI', test);
+        continue;
+      };
 
       // Get the file path
       const filePath = test.uri.fsPath;
@@ -294,6 +300,8 @@ export class BunTestController implements vscode.Disposable {
     // Run tests file by file
     for (const [filePath, tests] of testsByFile.entries()) {
       if (token.isCancellationRequested) break;
+
+      this.log.info('running tests for file:', filePath, tests);
 
       try {
         // Mark tests as running
@@ -308,7 +316,7 @@ export class BunTestController implements vscode.Disposable {
 
         if (testNamePatterns.length > 0) {
           const testNames = testNamePatterns.map(pattern => `(${pattern.split(' > ')?.pop() || pattern})`);
-          args.push('--test-name-pattern', `'${testNames.join('|')}'`);
+          args.push('--test-name-pattern', testNames.join('|'));
         }
 
         // Run Bun tests and get both stdout and the JUnit XML
@@ -322,7 +330,9 @@ export class BunTestController implements vscode.Disposable {
         // Convert absolute path to relative path for better DX
         const relativePath = filePath.replace(this.workspaceFolder.uri.fsPath + '/', '');
         const displayArgs = args.map(arg => arg === filePath ? relativePath : arg);
-        run.appendOutput(`\r\n\x1b[2m› bun ${displayArgs.join(' ')}\x1b[0m`);
+        const [command, ...commandArgs] = displayArgs;
+        const commandArgsWithQuotedParams = commandArgs.map(arg => arg.startsWith('--') ? arg : `'${arg}'`).join(' ')
+        run.appendOutput(`\r\n\x1b[2m› bun ${command} ${commandArgsWithQuotedParams}\x1b[0m`);
 
         const parsedOutput = parseBunTestOutput(stdout, this.workspaceFolder.uri.fsPath);
 
@@ -595,7 +605,7 @@ export class BunTestController implements vscode.Disposable {
     const testNamePatterns = this.getTestNamePatterns(tests);
     if (testNamePatterns.length > 0) {
       const testNames = testNamePatterns.map(pattern => `(${pattern.split(' > ')?.pop() || pattern})`);
-      args.push('--test-name-pattern', `'${testNames.join('|')}'`);
+      args.push('--test-name-pattern', testNames.join('|'));
     }
 
     // Start debugging
