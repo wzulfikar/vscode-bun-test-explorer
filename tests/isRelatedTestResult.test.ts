@@ -112,7 +112,7 @@ describe("isRelatedTestResult", () => {
     expect(isRelatedTestResult(testItem, testResult)).toEqual(false);
   })
 
-  test("nested testItem's children", () => {
+  test("handle nested children in testItem", () => {
     const testItem = {
       "id": "/Users/wzulfikar/code/playground/vscode-bun-test-explorer/tests/parseBunTestOutput.test.ts#parseBunTestOutput",
       "uri": {

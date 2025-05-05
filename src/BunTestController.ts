@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { spawn } from 'child_process';
 import { platform } from "os";
 import { Logger } from "./utils/logger";
-import { BunFileResult, BunTestResult } from "./types";
+import { BunFileResult, BunTestResponse, BunTestResult } from "./types";
 import { parseBunTestOutput } from "./utils/parseBunTestOutput";
 import { isRelatedTestResult } from "./utils/isRelatedTestResult";
 
@@ -164,7 +164,7 @@ export class BunTestController implements vscode.Disposable {
     return count;
   }
 
-  private createTestItems(response: any, parent?: vscode.TestItem): void {
+  private createTestItems(response: BunTestResponse, parent?: vscode.TestItem): void {
     if (!parent) {
       // Add or update root level test items
       for (const fileResult of response.results.testResults) {
@@ -231,6 +231,10 @@ export class BunTestController implements vscode.Disposable {
         test.name,
         parent.uri
       );
+
+      if (testId.includes('tests skipped')) {
+        this.log.info(`skipped test:`, test);
+      }
 
       if (location) {
         testItem.range = new vscode.Range(
@@ -319,16 +323,16 @@ export class BunTestController implements vscode.Disposable {
         // and it has no '#' character in the id
         const testUriString = tests[0].uri?.toString();
         const testIdEndsWithFileName = tests[0].uri && tests[0].label === tests[0].uri.fsPath.split('/').pop();
-        
+
         // A better check for file-level test items:
         // 1. First check if the label exactly matches the filename
         // 2. Or if the id doesn't contain a test name (no # character)
         // 3. Or if the id exactly matches the uri string
-        const isFileOnly = tests.length === 1 && 
-                          tests[0].uri && 
-                          (testIdEndsWithFileName ||
-                           !tests[0].id.includes('#') ||
-                           tests[0].id === testUriString);
+        const isFileOnly = tests.length === 1 &&
+          tests[0].uri &&
+          (testIdEndsWithFileName ||
+            !tests[0].id.includes('#') ||
+            tests[0].id === testUriString);
 
         if (!isFileOnly) {
           // We need to run specific tests, so collect test name patterns
