@@ -527,7 +527,45 @@ export class BunTestController implements vscode.Disposable {
             run.appendOutput(`\r\n${indent}\x1b[31m✗\x1b[0m ${testResult.name}`, location);
           }
           if (testResult.message) {
-            run.appendOutput(`\r\n${indent}  ${testResult.message}`, location);
+            // Improved error message formatting
+            const errorMessage = testResult.message.trim();
+            const messageLines = errorMessage.split('\n');
+            
+            // Add a separator line for errors
+            run.appendOutput(`\r\n${indent}  \x1b[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\x1b[0m`, location);
+            
+            // Add file location info if available
+            if (testResult.location) {
+              const relativePath = testItem.uri ? testItem.uri.fsPath.replace(this.workspaceFolder.uri.fsPath + '/', '') : '';
+              const locationInfo = `${relativePath}:${testResult.location.line}:${testResult.location.column}`;
+              run.appendOutput(`\r\n${indent}  \x1b[2m${locationInfo}\x1b[0m`, location);
+              run.appendOutput(`\r\n`, location);
+            }
+            
+            // Format each line of the error message with proper indentation
+            for (const line of messageLines) {
+              if (line.includes('Expected:')) {
+                const value = line.split('Expected:')[1].trim();
+                run.appendOutput(`\r\n${indent}  \x1b[31mExpected:\x1b[0m \x1b[32m${value}\x1b[0m`, location);
+              } else if (line.includes('Received:')) {
+                const value = line.split('Received:')[1].trim();
+                run.appendOutput(`\r\n${indent}  \x1b[31mReceived:\x1b[0m \x1b[33m${value}\x1b[0m`, location);
+              } else if (line.includes('Error:')) {
+                run.appendOutput(`\r\n${indent}  \x1b[31m${line.replace('Error:', 'Error:')}\x1b[0m`, location);
+              } else if (line.includes('error:')) {
+                run.appendOutput(`\r\n${indent}  \x1b[31m${line.replace('error:', 'Error:')}\x1b[0m`, location);
+              } else if (line.includes('at <anonymous>')) {
+                // Replace full path with relative path in stack traces
+                const workspacePath = this.workspaceFolder.uri.fsPath;
+                const relativeLine = line.replace(workspacePath + '/', '');
+                run.appendOutput(`\r\n${indent}  ${relativeLine}`, location);
+              } else {
+                run.appendOutput(`\r\n${indent}  ${line}`, location);
+              }
+            }
+            
+            // Add a closing separator line
+            run.appendOutput(`\r\n${indent}  \x1b[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\x1b[0m`, location);
           }
         }
       } else if (testResult.status === 'skipped') {
