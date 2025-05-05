@@ -4,6 +4,7 @@ import { platform } from "os";
 import { Logger } from "./utils/logger";
 import { BunFileResult, BunTestResult } from "./types";
 import { parseBunTestOutput } from "./utils/parseBunTestOutput";
+import { isRelatedTestResult } from "./utils/isRelatedTestResult";
 
 // Type definitions for VSCode Testing API
 class TestTag {
@@ -240,6 +241,9 @@ export class BunTestController implements vscode.Disposable {
 
       parent.children.add(testItem);
 
+      // Add debug data for easier lookup
+      testItem.description = path;
+
       // If this test has children, it's a suite/describe block
       if (test.children && test.children.length > 0) {
         this.addTestChildren(test.children, testItem, fileName, path);
@@ -313,10 +317,11 @@ export class BunTestController implements vscode.Disposable {
         // Prepare args for the specific file
         const testNamePatterns = this.getTestNamePatterns(tests);
         const args = this.testArgs.concat([filePath]);
+        const testNames = testNamePatterns.map(pattern => pattern.split(' > ')?.pop() || pattern);
 
         if (testNamePatterns.length > 0) {
-          const testNames = testNamePatterns.map(pattern => `(${pattern.split(' > ')?.pop() || pattern})`);
-          args.push('--test-name-pattern', testNames.join('|'));
+          const testNamesRegex = testNames.map(pattern => `(${pattern})`).join('|');
+          args.push('--test-name-pattern', testNamesRegex);
         }
 
         // Run Bun tests and get both stdout and the JUnit XML
@@ -354,7 +359,7 @@ export class BunTestController implements vscode.Disposable {
         );
 
         if (fileResult) {
-          this.log.info(`Processing test results for ${filePath}`, fileResult);
+          this.log.info(`Processing test results for ${filePath}:`, fileResult);
 
           // In a simple case like math.test.ts, we can directly map tests to results if needed
           // Skip this implementation for now, and use the existing processTestResults
@@ -402,7 +407,7 @@ export class BunTestController implements vscode.Disposable {
     run.started(test);
 
     if (test.children) {
-      test.children.forEach(child => {
+      test.children.forEach((child: vscode.TestItem) => {
         if (child) {
           this.markTestsAsRunning(child, run);
         }
@@ -441,26 +446,28 @@ export class BunTestController implements vscode.Disposable {
     parent: vscode.TestItem,
     parentPath: string = '',
     indentLevel: number = 0,
-    isLastBatch: boolean = true
+    isLastBatch: boolean = true,
   ): void {
-    if (!parent || !parent.uri) {
+    if (!parent.uri) {
       this.log.error(`Cannot process test results: parent or parent.uri is null`);
       return;
     }
 
+    this.log.info(`parent:`, parent);
+
     for (let i = 0; i < tests.length; i++) {
       const testResult = tests[i];
       const isLastTest = i === tests.length - 1;
-      const path = parentPath ? `${parentPath} > ${testResult.name}` : testResult.name;
 
-      // Find the matching test item
-      const testId = `${parent.uri.fsPath}#${path}`;
-      const testItem = this.findTestItemById(parent, testId);
+      this.log.info(`testResult:`, testResult.name);
 
-      if (!testItem) {
-        this.log.warn(`Could not find test item with id ${testId}`);
+      if (!isRelatedTestResult(parent, testResult)) {
+        this.log.warn(`not related test result: ${testResult.name}`);
         continue;
       }
+
+      const testItem = parent;
+      this.log.info(`Found test item: ${testResult.name} (${testItem.id})`);
 
       // Create a location for the test output
       let location: vscode.Location | undefined;
@@ -538,7 +545,7 @@ export class BunTestController implements vscode.Disposable {
 
       // Process children if there are any
       if (isParent && testItem) {
-        this.processTestResults(testResult.children!, run, testItem, path, indentLevel + 1, false);
+        this.processTestResults(testResult.children!, run, testItem, '', indentLevel + 1, false);
       }
 
       // Add a newline after the last test in the batch
@@ -546,30 +553,6 @@ export class BunTestController implements vscode.Disposable {
         run.appendOutput(`\r\n`, location);
       }
     }
-  }
-
-  private findTestItemById(parent: vscode.TestItem, id: string): vscode.TestItem | undefined {
-    if (!parent) return undefined;
-
-    if (parent.id === id) {
-      return parent;
-    }
-
-    // Check each child using forEach since we don't have values() in some TypeScript versions
-    let foundItem: vscode.TestItem | undefined = undefined;
-
-    if (parent.children) {
-      parent.children.forEach(child => {
-        if (!foundItem && child) {
-          const found = this.findTestItemById(child, id);
-          if (found) {
-            foundItem = found;
-          }
-        }
-      });
-    }
-
-    return foundItem;
   }
 
   private async debugTests(
@@ -603,9 +586,10 @@ export class BunTestController implements vscode.Disposable {
 
     // Add test name pattern if specific tests are requested
     const testNamePatterns = this.getTestNamePatterns(tests);
+    const testNames = testNamePatterns.map(pattern => pattern.split(' > ')?.pop() || pattern);
     if (testNamePatterns.length > 0) {
-      const testNames = testNamePatterns.map(pattern => `(${pattern.split(' > ')?.pop() || pattern})`);
-      args.push('--test-name-pattern', testNames.join('|'));
+      const testNamesRegex = testNames.map(pattern => `(${pattern})`).join('|');
+      args.push('--test-name-pattern', testNamesRegex);
     }
 
     // Start debugging
