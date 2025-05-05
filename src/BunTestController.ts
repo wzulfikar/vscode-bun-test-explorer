@@ -315,13 +315,33 @@ export class BunTestController implements vscode.Disposable {
         }
 
         // Prepare args for the specific file
-        const testNamePatterns = this.getTestNamePatterns(tests);
         const args = this.testArgs.concat([filePath]);
-        const testNames = testNamePatterns.map(pattern => pattern.split(' > ')?.pop() || pattern);
 
-        if (testNamePatterns.length > 0) {
-          const testNamesRegex = testNames.map(pattern => `(${pattern})`).join('|');
-          args.push('--test-name-pattern', testNamesRegex);
+        // Check if we're running the entire file or specific tests
+        // A test item is a file-level item if its id is the same as its uri.toString()
+        // and it has no '#' character in the id
+        const testUriString = tests[0].uri?.toString();
+        const testIdEndsWithFileName = tests[0].uri && tests[0].label === tests[0].uri.fsPath.split('/').pop();
+        
+        // A better check for file-level test items:
+        // 1. First check if the label exactly matches the filename
+        // 2. Or if the id doesn't contain a test name (no # character)
+        // 3. Or if the id exactly matches the uri string
+        const isFileOnly = tests.length === 1 && 
+                          tests[0].uri && 
+                          (testIdEndsWithFileName ||
+                           !tests[0].id.includes('#') ||
+                           tests[0].id === testUriString);
+
+        if (!isFileOnly) {
+          // We need to run specific tests, so collect test name patterns
+          const testNamePatterns = this.getTestNamePatterns(tests);
+          const testNames = testNamePatterns.map(pattern => pattern.split(' > ')?.pop() || pattern);
+
+          if (testNamePatterns.length > 0) {
+            const testNamesRegex = testNames.map(pattern => `(${pattern})`).join('|');
+            args.push('--test-name-pattern', testNamesRegex);
+          }
         }
 
         // Run Bun tests and get both stdout and the JUnit XML
@@ -380,7 +400,7 @@ export class BunTestController implements vscode.Disposable {
               // Add output for individual test
               if (test.uri) {
                 const location = new vscode.Location(test.uri, new vscode.Position(0, 0));
-                run.appendOutput(`No test results found for ${test.id}\n`, location);
+                run.appendOutput(`\r\nNo test results found for ${test.id}\n`, location);
               }
             }
           });
@@ -463,7 +483,7 @@ export class BunTestController implements vscode.Disposable {
 
       // Find the matching test item in the test tree
       let testItem = parent;
-      
+
       // If this is a child test, find the matching child test item
       if (testResult.name !== parent.label && parent.children.size > 0) {
         const foundChild = this.findMatchingTestItem(parent, testResult);
@@ -613,6 +633,16 @@ export class BunTestController implements vscode.Disposable {
     // Get test files
     const testFiles = new Set<string>();
 
+    // A better check for file-level test items (same as in runHandler)
+    const testUriString = tests[0].uri?.toString();
+    const testIdEndsWithFileName = tests[0].uri && tests[0].label === tests[0].uri.fsPath.split('/').pop();
+
+    const isFileOnly = tests.length === 1 &&
+      tests[0].uri &&
+      (testIdEndsWithFileName ||
+        !tests[0].id.includes('#') ||
+        tests[0].id === testUriString);
+
     for (const test of tests) {
       if (test.uri) {
         testFiles.add(test.uri.fsPath);
@@ -635,11 +665,13 @@ export class BunTestController implements vscode.Disposable {
     }
 
     // Add test name pattern if specific tests are requested
-    const testNamePatterns = this.getTestNamePatterns(tests);
-    const testNames = testNamePatterns.map(pattern => pattern.split(' > ')?.pop() || pattern);
-    if (testNamePatterns.length > 0) {
-      const testNamesRegex = testNames.map(pattern => `(${pattern})`).join('|');
-      args.push('--test-name-pattern', testNamesRegex);
+    if (!isFileOnly) {
+      const testNamePatterns = this.getTestNamePatterns(tests);
+      const testNames = testNamePatterns.map(pattern => pattern.split(' > ')?.pop() || pattern);
+      if (testNamePatterns.length > 0) {
+        const testNamesRegex = testNames.map(pattern => `(${pattern})`).join('|');
+        args.push('--test-name-pattern', testNamesRegex);
+      }
     }
 
     // Start debugging
