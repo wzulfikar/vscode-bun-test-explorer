@@ -337,7 +337,7 @@ export class BunTestController implements vscode.Disposable {
         const displayArgs = args.map(arg => arg === filePath ? relativePath : arg);
         const [command, ...commandArgs] = displayArgs;
         const commandArgsWithQuotedParams = commandArgs.map(arg => arg.startsWith('--') ? arg : `'${arg}'`).join(' ')
-        run.appendOutput(`\r\n\x1b[2m› bun ${command} ${commandArgsWithQuotedParams}\x1b[0m`);
+        run.appendOutput(`\r\n\x1b[2mbun ${command} ${commandArgsWithQuotedParams}\x1b[0m`);
 
         const parsedOutput = parseBunTestOutput(stdout, this.workspaceFolder.uri.fsPath);
 
@@ -461,13 +461,25 @@ export class BunTestController implements vscode.Disposable {
 
       this.log.info(`testResult:`, testResult.name);
 
-      if (!isRelatedTestResult(parent, testResult)) {
+      // Find the matching test item in the test tree
+      let testItem = parent;
+      
+      // If this is a child test, find the matching child test item
+      if (testResult.name !== parent.label && parent.children.size > 0) {
+        const foundChild = this.findMatchingTestItem(parent, testResult);
+        if (foundChild) {
+          testItem = foundChild;
+          this.log.info(`Found matching child test item: ${testItem.label} (${testItem.id})`);
+        } else if (!isRelatedTestResult(parent, testResult)) {
+          this.log.warn(`unrelated test result: ${testResult.name}. testItem:`, parent);
+          continue;
+        }
+      } else if (!isRelatedTestResult(parent, testResult)) {
         this.log.warn(`unrelated test result: ${testResult.name}. testItem:`, parent);
         continue;
       }
 
-      const testItem = parent;
-      this.log.info(`Found test item: ${testResult.name} (${testItem.id})`);
+      this.log.info(`Using test item: ${testResult.name} (${testItem.id})`);
 
       // Create a location for the test output
       let location: vscode.Location | undefined;
@@ -735,6 +747,32 @@ export class BunTestController implements vscode.Disposable {
       disposable.dispose();
     }
     this.disposables = [];
+  }
+
+  // Helper method to find the exact matching test item for a test result
+  private findMatchingTestItem(parent: vscode.TestItem, testResult: BunTestResult): vscode.TestItem | undefined {
+    let foundItem: vscode.TestItem | undefined;
+
+    // First try direct matching by label
+    parent.children.forEach(child => {
+      if (child.label === testResult.name) {
+        foundItem = child;
+      }
+    });
+
+    // If not found, try recursive search through children
+    if (!foundItem) {
+      parent.children.forEach(child => {
+        if (!foundItem && child.children.size > 0) {
+          const found = this.findMatchingTestItem(child, testResult);
+          if (found) {
+            foundItem = found;
+          }
+        }
+      });
+    }
+
+    return foundItem;
   }
 }
 
