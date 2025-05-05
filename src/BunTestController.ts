@@ -250,6 +250,15 @@ export class BunTestController implements vscode.Disposable {
         testItem.description = fileUri.fsPath.split('/').pop();
       }
 
+      // Mark tests in the skipped tests section as skipped
+      // or mark individual tests with skipped status
+      if (fileName.endsWith(' tests skipped') ||
+        (test.status === 'skipped')) {
+        // Create a skipped tag if it doesn't exist
+        const skippedTag = new TestTag('skipped');
+        testItem.tags = [skippedTag];
+      }
+
       if (location) {
         testItem.range = new vscode.Range(
           location.range.start,
@@ -372,6 +381,12 @@ export class BunTestController implements vscode.Disposable {
         const displayArgs = args.map(arg => arg === filePath ? relativePath : arg);
         const [command, ...commandArgs] = displayArgs;
         const commandArgsWithQuotedParams = commandArgs.map(arg => arg.startsWith('--') ? arg : `'${arg}'`).join(' ')
+
+        // Don't run test command for skipped tests (e.g. `bun test '6 tests skipped'`)
+        if (command === 'test' && commandArgs.join(' ').endsWith(' tests skipped')) {
+          continue
+        }
+
         run.appendOutput(`\r\n\x1b[2mbun ${command} ${commandArgsWithQuotedParams}\x1b[0m`);
 
         const parsedOutput = parseBunTestOutput(stdout, this.workspaceFolder.uri.fsPath);
@@ -638,6 +653,22 @@ export class BunTestController implements vscode.Disposable {
           }
         }
       } else if (testResult.status === 'skipped') {
+        run.skipped(testItem);
+        if (location) {
+          if (isParent) {
+            // Yellow triangle for skipped parent tests
+            run.appendOutput(`\r\n${indent}\x1b[33m▼\x1b[0m ${testResult.name}`, location);
+          } else {
+            // Yellow circle for skipped leaf tests
+            run.appendOutput(`\r\n${indent}\x1b[33m○\x1b[0m ${testResult.name}`, location);
+          }
+        }
+      }
+
+      // Special handling for tests in the skipped section
+      // If the test is in the skipped tests section but wasn't marked as skipped
+      // (because the file result doesn't indicate it), mark it as skipped
+      else if (testItem.id.includes(' tests skipped')) {
         run.skipped(testItem);
         if (location) {
           if (isParent) {

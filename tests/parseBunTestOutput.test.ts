@@ -203,679 +203,862 @@ tests/isRelatedTestResult.test.ts:
 Ran 27 tests across 6 files. [62.00ms]`
 
     const result = parseBunTestOutput(output, "/tmp/vscode-bun-test-explorer");
-    expect(result).toMatchObject({
-      results: {
-        testResults: [
-          {
-            "name": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-            "tests": [
-              {
-                "name": "Example test 2",
-                "status": "passed",
-                "children": [
-                  {
-                    "name": "subtract two numbers",
-                    "status": "passed",
-                    "children": [
-                      {
-                        "name": "failing test",
-                        "status": "passed",
-                        "duration": 2.83,
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                          "line": 0,
-                          "column": 0
-                        },
-                        "parent": "Example test 2 > subtract two numbers"
-                      },
-                      {
-                        "name": "skipped test",
-                        "status": "skipped",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                          "line": 0,
-                          "column": 0
-                        },
-                        "parent": "Example test 2 > subtract two numbers"
-                      }
-                    ],
-                    "parent": "Example test 2",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                      "line": 0,
-                      "column": 0
-                    }
-                  },
-                  {
-                    "name": "test with it",
-                    "status": "passed",
-                    "children": [
-                      {
-                        "name": "test 1",
-                        "status": "passed",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                          "line": 0,
-                          "column": 0
-                        },
-                        "parent": "Example test 2 > test with it"
-                      },
-                      {
-                        "name": "test 2",
-                        "status": "passed",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                          "line": 0,
-                          "column": 0
-                        },
-                        "parent": "Example test 2 > test with it"
-                      },
-                      {
-                        "name": "test 3",
-                        "status": "skipped",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                          "line": 0,
-                          "column": 0
-                        },
-                        "parent": "Example test 2 > test with it"
-                      }
-                    ],
-                    "parent": "Example test 2",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                      "line": 0,
-                      "column": 0
-                    }
-                  },
-                  {
-                    "name": "add two numbers",
-                    "status": "passed",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                      "line": 0,
-                      "column": 0
-                    },
-                    "parent": "Example test 2"
-                  },
-                  {
-                    "name": "add two numbers with type",
-                    "status": "passed",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                      "line": 0,
-                      "column": 0
-                    },
-                    "parent": "Example test 2"
-                  }
-                ],
-                "location": {
-                  "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                  "line": 0,
-                  "column": 0
-                }
-              }
-            ],
-            "passed": true
-          },
-          {
-            "name": "/tmp/vscode-bun-test-explorer/tests/parseBunTestOutput.test.ts",
-            "tests": [
-              {
-                "name": "parseBunTestOutput",
-                "status": "passed",
-                "children": [
-                  {
-                    "name": "parse the output of bun test",
-                    "status": "passed",
-                    "duration": 4.98,
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/parseBunTestOutput.test.ts",
-                      "line": 0,
-                      "column": 0
-                    },
-                    "parent": "parseBunTestOutput"
-                  },
-                  {
-                    "name": "with skip",
-                    "status": "passed",
-                    "duration": 0.16,
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/parseBunTestOutput.test.ts",
-                      "line": 0,
-                      "column": 0
-                    },
-                    "parent": "parseBunTestOutput"
-                  }
-                ],
-                "location": {
-                  "file": "/tmp/vscode-bun-test-explorer/tests/parseBunTestOutput.test.ts",
-                  "line": 0,
-                  "column": 0
-                }
-              }
-            ],
-            "passed": true
-          },
-          {
-            "name": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-            "tests": [
-              {
-                "name": "User Authentication",
-                "status": "passed",
-                "children": [
-                  {
-                    "name": "Login Process",
-                    "status": "passed",
-                    "children": [
-                      {
-                        "name": "should validate username",
-                        "status": "passed",
-                        "duration": 0.11,
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                          "line": 0,
-                          "column": 0
-                        },
-                        "parent": "User Authentication > Login Process"
-                      },
-                      {
-                        "name": "should check for special characters",
-                        "status": "skipped",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                          "line": 0,
-                          "column": 0
-                        },
-                        "parent": "User Authentication > Login Process"
-                      },
-                      {
-                        "name": "should validate email format",
-                        "status": "passed",
-                        "duration": 0.04,
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                          "line": 0,
-                          "column": 0
-                        },
-                        "parent": "User Authentication > Login Process"
-                      }
-                    ],
-                    "parent": "User Authentication",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                      "line": 0,
-                      "column": 0
-                    }
-                  },
-                  {
-                    "name": "Registration",
-                    "status": "passed",
-                    "children": [
-                      {
-                        "name": "Password Requirements",
-                        "status": "passed",
-                        "children": [
-                          {
-                            "name": "should require minimum length",
-                            "status": "passed",
-                            "location": {
-                              "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                              "line": 0,
-                              "column": 0
-                            },
-                            "parent": "User Authentication > Registration > Password Requirements"
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "results": {
+          "numFailedTests": 0,
+          "numPassedTests": 21,
+          "numSkippedTests": 12,
+          "numTotalTests": 33,
+          "testResults": [
+            {
+              "name": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+              "passed": true,
+              "tests": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "duration": 2.83,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                            "line": 0,
                           },
-                          {
-                            "name": "should require uppercase letter",
-                            "status": "skipped",
-                            "location": {
-                              "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                              "line": 0,
-                              "column": 0
-                            },
-                            "parent": "User Authentication > Registration > Password Requirements"
+                          "name": "failing test",
+                          "parent": "Example test 2 > subtract two numbers",
+                          "status": "passed",
+                        },
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                            "line": 0,
                           },
-                          {
-                            "name": "should require numbers",
-                            "status": "passed",
-                            "duration": 0.07,
-                            "location": {
-                              "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                              "line": 0,
-                              "column": 0
-                            },
-                            "parent": "User Authentication > Registration > Password Requirements"
-                          }
-                        ],
-                        "parent": "User Authentication > Registration",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                          "line": 0,
-                          "column": 0
-                        }
+                          "name": "skipped test",
+                          "parent": "Example test 2 > subtract two numbers",
+                          "status": "skipped",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                        "line": 0,
                       },
-                      {
-                        "name": "should prevent duplicate emails",
-                        "status": "passed",
-                        "duration": 0.01,
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                          "line": 0,
-                          "column": 0
+                      "name": "subtract two numbers",
+                      "parent": "Example test 2",
+                      "status": "passed",
+                    },
+                    {
+                      "children": [
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                            "line": 0,
+                          },
+                          "name": "test 1",
+                          "parent": "Example test 2 > test with it",
+                          "status": "passed",
                         },
-                        "parent": "User Authentication > Registration"
-                      }
-                    ],
-                    "parent": "User Authentication",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                      "line": 0,
-                      "column": 0
-                    }
-                  }
-                ],
-                "location": {
-                  "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                  "line": 0,
-                  "column": 0
-                }
-              },
-              {
-                "name": "Payment Processing",
-                "status": "passed",
-                "children": [
-                  {
-                    "name": "Refunds",
-                    "status": "passed",
-                    "children": [
-                      {
-                        "name": "should allow full refund",
-                        "status": "passed",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                          "line": 0,
-                          "column": 0
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                            "line": 0,
+                          },
+                          "name": "test 2",
+                          "parent": "Example test 2 > test with it",
+                          "status": "passed",
                         },
-                        "parent": "Payment Processing > Refunds"
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                            "line": 0,
+                          },
+                          "name": "test 3",
+                          "parent": "Example test 2 > test with it",
+                          "status": "skipped",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                        "line": 0,
                       },
-                      {
-                        "name": "should prorate partial refunds",
-                        "status": "skipped",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                          "line": 0,
-                          "column": 0
+                      "name": "test with it",
+                      "parent": "Example test 2",
+                      "status": "passed",
+                    },
+                    {
+                      "duration": undefined,
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                        "line": 0,
+                      },
+                      "name": "add two numbers",
+                      "parent": "Example test 2",
+                      "status": "passed",
+                    },
+                    {
+                      "duration": undefined,
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                        "line": 0,
+                      },
+                      "name": "add two numbers with type",
+                      "parent": "Example test 2",
+                      "status": "passed",
+                    },
+                  ],
+                  "location": {
+                    "column": 0,
+                    "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                    "line": 0,
+                  },
+                  "name": "Example test 2",
+                  "parent": undefined,
+                  "status": "passed",
+                },
+              ],
+            },
+            {
+              "name": "/tmp/vscode-bun-test-explorer/tests/parseBunTestOutput.test.ts",
+              "passed": true,
+              "tests": [
+                {
+                  "children": [
+                    {
+                      "duration": 4.98,
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/parseBunTestOutput.test.ts",
+                        "line": 0,
+                      },
+                      "name": "parse the output of bun test",
+                      "parent": "parseBunTestOutput",
+                      "status": "passed",
+                    },
+                    {
+                      "duration": 0.16,
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/parseBunTestOutput.test.ts",
+                        "line": 0,
+                      },
+                      "name": "with skip",
+                      "parent": "parseBunTestOutput",
+                      "status": "passed",
+                    },
+                  ],
+                  "location": {
+                    "column": 0,
+                    "file": "/tmp/vscode-bun-test-explorer/tests/parseBunTestOutput.test.ts",
+                    "line": 0,
+                  },
+                  "name": "parseBunTestOutput",
+                  "parent": undefined,
+                  "status": "passed",
+                },
+              ],
+            },
+            {
+              "name": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+              "passed": true,
+              "tests": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "duration": 0.11,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                            "line": 0,
+                          },
+                          "name": "should validate username",
+                          "parent": "User Authentication > Login Process",
+                          "status": "passed",
                         },
-                        "parent": "Payment Processing > Refunds"
-                      }
-                    ],
-                    "parent": "Payment Processing",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                      "line": 0,
-                      "column": 0
-                    }
-                  },
-                  {
-                    "name": "International Payments",
-                    "status": "passed",
-                    "children": [
-                      {
-                        "name": "should convert currency",
-                        "status": "skipped",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                          "line": 0,
-                          "column": 0
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                            "line": 0,
+                          },
+                          "name": "should check for special characters",
+                          "parent": "User Authentication > Login Process",
+                          "status": "skipped",
                         },
-                        "parent": "Payment Processing > International Payments"
-                      }
-                    ],
-                    "parent": "Payment Processing",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                      "line": 0,
-                      "column": 0
-                    }
-                  },
-                  {
-                    "name": "should format currency correctly",
-                    "status": "passed",
-                    "duration": 0.01,
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                      "line": 0,
-                      "column": 0
-                    },
-                    "parent": "Payment Processing"
-                  }
-                ],
-                "location": {
-                  "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                  "line": 0,
-                  "column": 0
-                }
-              }
-            ],
-            "passed": true
-          },
-          {
-            "name": "/tmp/vscode-bun-test-explorer/tests/test-with-it.test.ts",
-            "tests": [
-              {
-                "name": "Sample Test with it()",
-                "status": "passed",
-                "children": [
-                  {
-                    "name": "should sum numbers correctly",
-                    "status": "passed",
-                    "duration": 0.14,
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/test-with-it.test.ts",
-                      "line": 0,
-                      "column": 0
-                    },
-                    "parent": "Sample Test with it()"
-                  },
-                  {
-                    "name": "should subtract numbers correctly",
-                    "status": "passed",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/test-with-it.test.ts",
-                      "line": 0,
-                      "column": 0
-                    },
-                    "parent": "Sample Test with it()"
-                  }
-                ],
-                "location": {
-                  "file": "/tmp/vscode-bun-test-explorer/tests/test-with-it.test.ts",
-                  "line": 0,
-                  "column": 0
-                }
-              }
-            ],
-            "passed": true
-          },
-          {
-            "name": "/tmp/vscode-bun-test-explorer/tests/math.test.ts",
-            "tests": [
-              {
-                "name": "Example test",
-                "status": "passed",
-                "children": [
-                  {
-                    "name": "add two numbers",
-                    "status": "passed",
-                    "duration": 0.01,
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/math.test.ts",
-                      "line": 0,
-                      "column": 0
-                    },
-                    "parent": "Example test"
-                  },
-                  {
-                    "name": "add two numbers with type",
-                    "status": "passed",
-                    "duration": 0.02,
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/math.test.ts",
-                      "line": 0,
-                      "column": 0
-                    },
-                    "parent": "Example test"
-                  }
-                ],
-                "location": {
-                  "file": "/tmp/vscode-bun-test-explorer/tests/math.test.ts",
-                  "line": 0,
-                  "column": 0
-                }
-              }
-            ],
-            "passed": true
-          },
-          {
-            "name": "/tmp/vscode-bun-test-explorer/tests/isRelatedTestResult.test.ts",
-            "tests": [
-              {
-                "name": "isRelatedTestResult",
-                "status": "passed",
-                "children": [
-                  {
-                    "name": "return true when child name matches",
-                    "status": "passed",
-                    "duration": 0.6,
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/isRelatedTestResult.test.ts",
-                      "line": 0,
-                      "column": 0
-                    },
-                    "parent": "isRelatedTestResult"
-                  },
-                  {
-                    "name": "return false when no match",
-                    "status": "passed",
-                    "duration": 0.03,
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/isRelatedTestResult.test.ts",
-                      "line": 0,
-                      "column": 0
-                    },
-                    "parent": "isRelatedTestResult"
-                  },
-                  {
-                    "name": "handle nested children in testItem",
-                    "status": "passed",
-                    "duration": 0.09,
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/isRelatedTestResult.test.ts",
-                      "line": 0,
-                      "column": 0
-                    },
-                    "parent": "isRelatedTestResult"
-                  }
-                ],
-                "location": {
-                  "file": "/tmp/vscode-bun-test-explorer/tests/isRelatedTestResult.test.ts",
-                  "line": 0,
-                  "column": 0
-                }
-              }
-            ],
-            "passed": true
-          },
-          {
-            "name": "/tmp/vscode-bun-test-explorer/6 tests skipped",
-            "tests": [
-              {
-                "name": "Example test 2",
-                "status": "passed",
-                "children": [
-                  {
-                    "name": "subtract two numbers",
-                    "status": "passed",
-                    "children": [
-                      {
-                        "name": "skipped test",
-                        "status": "skipped",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                          "line": 0,
-                          "column": 0
+                        {
+                          "duration": 0.04,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                            "line": 0,
+                          },
+                          "name": "should validate email format",
+                          "parent": "User Authentication > Login Process",
+                          "status": "passed",
                         },
-                        "parent": "Example test 2 > subtract two numbers"
-                      }
-                    ],
-                    "parent": "Example test 2",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                      "line": 0,
-                      "column": 0
-                    }
-                  },
-                  {
-                    "name": "test with it",
-                    "status": "passed",
-                    "children": [
-                      {
-                        "name": "test 3",
-                        "status": "skipped",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                          "line": 0,
-                          "column": 0
-                        },
-                        "parent": "Example test 2 > test with it"
-                      }
-                    ],
-                    "parent": "Example test 2",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                      "line": 0,
-                      "column": 0
-                    }
-                  }
-                ],
-                "location": {
-                  "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
-                  "line": 0,
-                  "column": 0
-                }
-              },
-              {
-                "name": "User Authentication",
-                "status": "passed",
-                "children": [
-                  {
-                    "name": "Login Process",
-                    "status": "passed",
-                    "children": [
-                      {
-                        "name": "should check for special characters",
-                        "status": "skipped",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                          "line": 0,
-                          "column": 0
-                        },
-                        "parent": "User Authentication > Login Process"
-                      }
-                    ],
-                    "parent": "User Authentication",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                      "line": 0,
-                      "column": 0
-                    }
-                  },
-                  {
-                    "name": "Registration",
-                    "status": "passed",
-                    "children": [
-                      {
-                        "name": "Password Requirements",
-                        "status": "passed",
-                        "children": [
-                          {
-                            "name": "should require uppercase letter",
-                            "status": "skipped",
-                            "location": {
-                              "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                              "line": 0,
-                              "column": 0
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                        "line": 0,
+                      },
+                      "name": "Login Process",
+                      "parent": "User Authentication",
+                      "status": "passed",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "duration": undefined,
+                              "location": {
+                                "column": 0,
+                                "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                                "line": 0,
+                              },
+                              "name": "should require minimum length",
+                              "parent": "User Authentication > Registration > Password Requirements",
+                              "status": "passed",
                             },
-                            "parent": "User Authentication > Registration > Password Requirements"
-                          }
-                        ],
-                        "parent": "User Authentication > Registration",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                          "line": 0,
-                          "column": 0
-                        }
-                      }
-                    ],
-                    "parent": "User Authentication",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                      "line": 0,
-                      "column": 0
-                    }
-                  }
-                ],
-                "location": {
-                  "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                  "line": 0,
-                  "column": 0
-                }
-              },
-              {
-                "name": "Payment Processing",
-                "status": "passed",
-                "children": [
-                  {
-                    "name": "Refunds",
-                    "status": "passed",
-                    "children": [
-                      {
-                        "name": "should prorate partial refunds",
-                        "status": "skipped",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                          "line": 0,
-                          "column": 0
+                            {
+                              "duration": undefined,
+                              "location": {
+                                "column": 0,
+                                "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                                "line": 0,
+                              },
+                              "name": "should require uppercase letter",
+                              "parent": "User Authentication > Registration > Password Requirements",
+                              "status": "skipped",
+                            },
+                            {
+                              "duration": 0.07,
+                              "location": {
+                                "column": 0,
+                                "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                                "line": 0,
+                              },
+                              "name": "should require numbers",
+                              "parent": "User Authentication > Registration > Password Requirements",
+                              "status": "passed",
+                            },
+                          ],
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                            "line": 0,
+                          },
+                          "name": "Password Requirements",
+                          "parent": "User Authentication > Registration",
+                          "status": "passed",
                         },
-                        "parent": "Payment Processing > Refunds"
-                      }
-                    ],
-                    "parent": "Payment Processing",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                      "line": 0,
-                      "column": 0
-                    }
+                        {
+                          "duration": 0.01,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                            "line": 0,
+                          },
+                          "name": "should prevent duplicate emails",
+                          "parent": "User Authentication > Registration",
+                          "status": "passed",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                        "line": 0,
+                      },
+                      "name": "Registration",
+                      "parent": "User Authentication",
+                      "status": "passed",
+                    },
+                  ],
+                  "location": {
+                    "column": 0,
+                    "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                    "line": 0,
                   },
-                  {
-                    "name": "International Payments",
-                    "status": "passed",
-                    "children": [
-                      {
-                        "name": "should convert currency",
-                        "status": "skipped",
-                        "location": {
-                          "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                          "line": 0,
-                          "column": 0
+                  "name": "User Authentication",
+                  "parent": undefined,
+                  "status": "passed",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                            "line": 0,
+                          },
+                          "name": "should allow full refund",
+                          "parent": "Payment Processing > Refunds",
+                          "status": "passed",
                         },
-                        "parent": "Payment Processing > International Payments"
-                      }
-                    ],
-                    "parent": "Payment Processing",
-                    "location": {
-                      "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                      "line": 0,
-                      "column": 0
-                    }
-                  }
-                ],
-                "location": {
-                  "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
-                  "line": 0,
-                  "column": 0
-                }
-              }
-            ],
-            "passed": true
-          }
-        ],
-        numPassedTests: 21,
-        numFailedTests: 0,
-        numSkippedTests: 12, // 6 tests skipped from original output + 6 tests skipped from the custom section
-        numTotalTests: 33,
-      },
-    });
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                            "line": 0,
+                          },
+                          "name": "should prorate partial refunds",
+                          "parent": "Payment Processing > Refunds",
+                          "status": "skipped",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                        "line": 0,
+                      },
+                      "name": "Refunds",
+                      "parent": "Payment Processing",
+                      "status": "passed",
+                    },
+                    {
+                      "children": [
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                            "line": 0,
+                          },
+                          "name": "should convert currency",
+                          "parent": "Payment Processing > International Payments",
+                          "status": "skipped",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                        "line": 0,
+                      },
+                      "name": "International Payments",
+                      "parent": "Payment Processing",
+                      "status": "passed",
+                    },
+                    {
+                      "duration": 0.01,
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                        "line": 0,
+                      },
+                      "name": "should format currency correctly",
+                      "parent": "Payment Processing",
+                      "status": "passed",
+                    },
+                  ],
+                  "location": {
+                    "column": 0,
+                    "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                    "line": 0,
+                  },
+                  "name": "Payment Processing",
+                  "parent": undefined,
+                  "status": "passed",
+                },
+              ],
+            },
+            {
+              "name": "/tmp/vscode-bun-test-explorer/tests/test-with-it.test.ts",
+              "passed": true,
+              "tests": [
+                {
+                  "children": [
+                    {
+                      "duration": 0.14,
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/test-with-it.test.ts",
+                        "line": 0,
+                      },
+                      "name": "should sum numbers correctly",
+                      "parent": "Sample Test with it()",
+                      "status": "passed",
+                    },
+                    {
+                      "duration": undefined,
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/test-with-it.test.ts",
+                        "line": 0,
+                      },
+                      "name": "should subtract numbers correctly",
+                      "parent": "Sample Test with it()",
+                      "status": "passed",
+                    },
+                  ],
+                  "location": {
+                    "column": 0,
+                    "file": "/tmp/vscode-bun-test-explorer/tests/test-with-it.test.ts",
+                    "line": 0,
+                  },
+                  "name": "Sample Test with it()",
+                  "parent": undefined,
+                  "status": "passed",
+                },
+              ],
+            },
+            {
+              "name": "/tmp/vscode-bun-test-explorer/tests/math.test.ts",
+              "passed": true,
+              "tests": [
+                {
+                  "children": [
+                    {
+                      "duration": 0.01,
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/math.test.ts",
+                        "line": 0,
+                      },
+                      "name": "add two numbers",
+                      "parent": "Example test",
+                      "status": "passed",
+                    },
+                    {
+                      "duration": 0.02,
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/math.test.ts",
+                        "line": 0,
+                      },
+                      "name": "add two numbers with type",
+                      "parent": "Example test",
+                      "status": "passed",
+                    },
+                  ],
+                  "location": {
+                    "column": 0,
+                    "file": "/tmp/vscode-bun-test-explorer/tests/math.test.ts",
+                    "line": 0,
+                  },
+                  "name": "Example test",
+                  "parent": undefined,
+                  "status": "passed",
+                },
+              ],
+            },
+            {
+              "name": "/tmp/vscode-bun-test-explorer/tests/isRelatedTestResult.test.ts",
+              "passed": true,
+              "tests": [
+                {
+                  "children": [
+                    {
+                      "duration": 0.6,
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/isRelatedTestResult.test.ts",
+                        "line": 0,
+                      },
+                      "name": "return true when child name matches",
+                      "parent": "isRelatedTestResult",
+                      "status": "passed",
+                    },
+                    {
+                      "duration": 0.03,
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/isRelatedTestResult.test.ts",
+                        "line": 0,
+                      },
+                      "name": "return false when no match",
+                      "parent": "isRelatedTestResult",
+                      "status": "passed",
+                    },
+                    {
+                      "duration": 0.09,
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/isRelatedTestResult.test.ts",
+                        "line": 0,
+                      },
+                      "name": "handle nested children in testItem",
+                      "parent": "isRelatedTestResult",
+                      "status": "passed",
+                    },
+                  ],
+                  "location": {
+                    "column": 0,
+                    "file": "/tmp/vscode-bun-test-explorer/tests/isRelatedTestResult.test.ts",
+                    "line": 0,
+                  },
+                  "name": "isRelatedTestResult",
+                  "parent": undefined,
+                  "status": "passed",
+                },
+              ],
+            },
+            {
+              "name": "/tmp/vscode-bun-test-explorer/6 tests skipped",
+              "passed": true,
+              "tests": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                            "line": 0,
+                          },
+                          "name": "skipped test",
+                          "parent": "Example test 2 > subtract two numbers",
+                          "status": "skipped",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                        "line": 0,
+                      },
+                      "name": "subtract two numbers",
+                      "parent": "Example test 2",
+                      "status": "passed",
+                    },
+                    {
+                      "children": [
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                            "line": 0,
+                          },
+                          "name": "test 3",
+                          "parent": "Example test 2 > test with it",
+                          "status": "skipped",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                        "line": 0,
+                      },
+                      "name": "test with it",
+                      "parent": "Example test 2",
+                      "status": "passed",
+                    },
+                  ],
+                  "location": {
+                    "column": 0,
+                    "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                    "line": 0,
+                  },
+                  "name": "Example test 2",
+                  "parent": undefined,
+                  "status": "passed",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                            "line": 0,
+                          },
+                          "name": "should check for special characters",
+                          "parent": "User Authentication > Login Process",
+                          "status": "skipped",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                        "line": 0,
+                      },
+                      "name": "Login Process",
+                      "parent": "User Authentication",
+                      "status": "passed",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "duration": undefined,
+                              "location": {
+                                "column": 0,
+                                "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                                "line": 0,
+                              },
+                              "name": "should require uppercase letter",
+                              "parent": "User Authentication > Registration > Password Requirements",
+                              "status": "skipped",
+                            },
+                          ],
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                            "line": 0,
+                          },
+                          "name": "Password Requirements",
+                          "parent": "User Authentication > Registration",
+                          "status": "passed",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                        "line": 0,
+                      },
+                      "name": "Registration",
+                      "parent": "User Authentication",
+                      "status": "passed",
+                    },
+                  ],
+                  "location": {
+                    "column": 0,
+                    "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                    "line": 0,
+                  },
+                  "name": "User Authentication",
+                  "parent": undefined,
+                  "status": "passed",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                            "line": 0,
+                          },
+                          "name": "should prorate partial refunds",
+                          "parent": "Payment Processing > Refunds",
+                          "status": "skipped",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                        "line": 0,
+                      },
+                      "name": "Refunds",
+                      "parent": "Payment Processing",
+                      "status": "passed",
+                    },
+                    {
+                      "children": [
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                            "line": 0,
+                          },
+                          "name": "should convert currency",
+                          "parent": "Payment Processing > International Payments",
+                          "status": "skipped",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                        "line": 0,
+                      },
+                      "name": "International Payments",
+                      "parent": "Payment Processing",
+                      "status": "passed",
+                    },
+                  ],
+                  "location": {
+                    "column": 0,
+                    "file": "/tmp/vscode-bun-test-explorer/tests/dummy.test.ts",
+                    "line": 0,
+                  },
+                  "name": "Payment Processing",
+                  "parent": undefined,
+                  "status": "passed",
+                },
+              ],
+            },
+          ],
+        },
+      }
+    `);
+  })
+
+  test("ignore 'tests failed' section", () => {
+    const output = `bun test v1.2.12 (32a47ae4)
+
+tests/more-math.test.ts:
+(fail) Example test 2 > subtract two numbers > failing test [0.04ms]
+(skip) Example test 2 > subtract two numbers > skipped test
+(pass) Example test 2 > test with it > test 1 [0.01ms]
+
+1 tests skipped:
+(skip) Example test 2 > subtract two numbers > skipped test
+
+1 tests failed:
+(fail) Example test 2 > subtract two numbers > failing test [0.04ms]
+
+ 1 pass
+ 1 skip
+ 1 fail
+ 3 expect() calls
+Ran 3 tests across 1 files. [29.00ms]`;
+
+    const result = parseBunTestOutput(output, "/tmp/vscode-bun-test-explorer");
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "results": {
+          "numFailedTests": 1,
+          "numPassedTests": 1,
+          "numSkippedTests": 2,
+          "numTotalTests": 4,
+          "testResults": [
+            {
+              "name": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+              "passed": false,
+              "tests": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "duration": 0.04,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                            "line": 0,
+                          },
+                          "message": "",
+                          "name": "failing test",
+                          "parent": "Example test 2 > subtract two numbers",
+                          "status": "failed",
+                        },
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                            "line": 0,
+                          },
+                          "name": "skipped test",
+                          "parent": "Example test 2 > subtract two numbers",
+                          "status": "skipped",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                        "line": 0,
+                      },
+                      "name": "subtract two numbers",
+                      "parent": "Example test 2",
+                      "status": "failed",
+                    },
+                    {
+                      "children": [
+                        {
+                          "duration": 0.01,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                            "line": 0,
+                          },
+                          "name": "test 1",
+                          "parent": "Example test 2 > test with it",
+                          "status": "passed",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                        "line": 0,
+                      },
+                      "name": "test with it",
+                      "parent": "Example test 2",
+                      "status": "passed",
+                    },
+                  ],
+                  "location": {
+                    "column": 0,
+                    "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                    "line": 0,
+                  },
+                  "name": "Example test 2",
+                  "parent": undefined,
+                  "status": "failed",
+                },
+              ],
+            },
+            {
+              "name": "/tmp/vscode-bun-test-explorer/1 tests skipped",
+              "passed": true,
+              "tests": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "duration": undefined,
+                          "location": {
+                            "column": 0,
+                            "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                            "line": 0,
+                          },
+                          "name": "skipped test",
+                          "parent": "Example test 2 > subtract two numbers",
+                          "status": "skipped",
+                        },
+                      ],
+                      "location": {
+                        "column": 0,
+                        "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                        "line": 0,
+                      },
+                      "name": "subtract two numbers",
+                      "parent": "Example test 2",
+                      "status": "passed",
+                    },
+                  ],
+                  "location": {
+                    "column": 0,
+                    "file": "/tmp/vscode-bun-test-explorer/tests/more-math.test.ts",
+                    "line": 0,
+                  },
+                  "name": "Example test 2",
+                  "parent": undefined,
+                  "status": "passed",
+                },
+              ],
+            },
+          ],
+        },
+      }
+    `)
   })
 });

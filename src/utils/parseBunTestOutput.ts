@@ -37,6 +37,9 @@ export function parseBunTestOutput(output: string, workspacePath: string): BunTe
 
   // Track skipped tests section marker
   let inSkippedTestsSection = false;
+  // Track failed tests section marker - we will ignore this section
+  let inFailedTestsSection = false;
+  // @ts-ignore
   let lastFileBeforeSkippedTests: string | null = null;
 
   for (let i = 0; i < lines.length; i++) {
@@ -49,6 +52,7 @@ export function parseBunTestOutput(output: string, workspacePath: string): BunTe
     // Detect skipped tests section
     if (line.match(/^\d+ tests skipped:$/)) {
       inSkippedTestsSection = true;
+      inFailedTestsSection = false;
       
       if (currentFile && currentFile.tests.length > 0) {
         testResults.push(currentFile);
@@ -65,12 +69,31 @@ export function parseBunTestOutput(output: string, workspacePath: string): BunTe
       continue;
     }
 
+    // Detect failed tests section - we will ignore this section completely
+    if (line.match(/^\d+ tests failed:$/)) {
+      inFailedTestsSection = true;
+      inSkippedTestsSection = false;
+      
+      if (currentFile && currentFile.tests.length > 0) {
+        testResults.push(currentFile);
+      }
+      
+      // We don't want to create a special file for failed tests
+      // as the failed tests are already included in their respective files
+      currentFile = null;
+      
+      continue;
+    }
+
     // Skip the summary lines
     if (line.match(/^\d+\s+pass$/)) continue;
     if (line.match(/^\d+\s+fail$/)) continue;
     if (line.match(/^\d+\s+skip$/)) continue;
     if (line.match(/^\d+\s+expect\(\) calls$/)) continue;
     if (line.match(/^Ran \d+ tests across \d+ files/)) continue;
+
+    // If we're in the failed tests section, skip all lines until we hit another section
+    if (inFailedTestsSection) continue;
 
     // Check if we're collecting error message details
     if (collectingError) {
@@ -125,8 +148,9 @@ export function parseBunTestOutput(output: string, workspacePath: string): BunTe
         testResults.push(currentFile);
       }
 
-      // Reset the skipped tests section flag
+      // Reset the section flags
       inSkippedTestsSection = false;
+      inFailedTestsSection = false;
 
       // Start a new file
       const filePath = fileMatch[1].trim();
