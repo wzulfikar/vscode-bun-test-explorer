@@ -241,9 +241,6 @@ export class BunTestController implements vscode.Disposable {
 
       parent.children.add(testItem);
 
-      // Add debug data for easier lookup
-      testItem.description = path;
-
       // If this test has children, it's a suite/describe block
       if (test.children && test.children.length > 0) {
         this.addTestChildren(test.children, testItem, fileName, path);
