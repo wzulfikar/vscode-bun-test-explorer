@@ -216,12 +216,25 @@ export class BunTestController implements vscode.Disposable {
       const testId = `${fileName}#${path}`;
 
       let location: vscode.Location | undefined = undefined;
+
+      this.log.info(`addTestChildren:`, parentPath, test.name, testId);
+
+      // Check if we're dealing with a test from the skipped tests section
+      // and use the correct file URI if available in the test location
+      let fileUri = parent.uri!;
+      if (fileName.endsWith(' tests skipped') &&
+        test.location &&
+        test.location.file &&
+        !test.location.file.endsWith(' tests skipped')) {
+        fileUri = vscode.Uri.file(test.location.file);
+      }
+
       if (test.location && test.location.line > 0) {
         // Ensure line is positive (VSCode uses 0-based lines)
         const line = Math.max(0, test.location.line - 1);
         const column = Math.max(0, test.location.column);
         location = new vscode.Location(
-          parent.uri!,
+          fileUri,
           new vscode.Position(line, column)
         );
       }
@@ -229,8 +242,13 @@ export class BunTestController implements vscode.Disposable {
       const testItem = this.testController.createTestItem(
         testId,
         test.name,
-        parent.uri
+        fileUri,
       );
+
+      // Add filename as description to skipped test parent nodes 
+      if (fileName.endsWith(' tests skipped') && !parentPath) {
+        testItem.description = fileUri.fsPath.split('/').pop();
+      }
 
       if (location) {
         testItem.range = new vscode.Range(
@@ -391,16 +409,28 @@ export class BunTestController implements vscode.Disposable {
             });
           }
         } else {
-          tests.forEach(test => {
-            if (test) {
-              run.skipped(test);
-              // Add output for individual test
-              if (test.uri) {
-                const location = new vscode.Location(test.uri, new vscode.Position(0, 0));
-                run.appendOutput(`\r\nNo test results found for ${test.id}\n`, location);
-              }
+          // For skipped tests section, check if there's a special file result
+          const skippedTestsFileResult = parsedOutput.results.testResults.find(
+            (result: BunFileResult) => result.name.endsWith(' tests skipped')
+          );
+
+          if (skippedTestsFileResult) {
+            this.log.info(`Processing skipped tests results for ${filePath}`);
+            if (tests && tests.length > 0 && tests[0] && tests[0].uri) {
+              this.processTestResults(skippedTestsFileResult.tests, run, tests[0], '', 0, true);
             }
-          });
+          } else {
+            tests.forEach(test => {
+              if (test) {
+                run.skipped(test);
+                // Add output for individual test
+                if (test.uri) {
+                  const location = new vscode.Location(test.uri, new vscode.Position(0, 0));
+                  run.appendOutput(`\r\nNo test results found for ${test.id}\n`, location);
+                }
+              }
+            });
+          }
         }
       } catch (error) {
         this.log.error(`Error running tests for ${filePath}: ${error}`);
@@ -510,8 +540,18 @@ export class BunTestController implements vscode.Disposable {
           column = Math.max(0, testResult.location.column);
         }
 
+        // Check if we're dealing with a test from the skipped tests section
+        // and use the correct file URI if available in the test location
+        let fileUri = testItem.uri;
+        if (testItem.id.endsWith(' tests skipped') &&
+          testResult.location &&
+          testResult.location.file &&
+          !testResult.location.file.endsWith(' tests skipped')) {
+          fileUri = vscode.Uri.file(testResult.location.file);
+        }
+
         const position = new vscode.Position(line, column);
-        location = new vscode.Location(testItem.uri, position);
+        location = new vscode.Location(fileUri, position);
       }
 
       // Check if this is a parent test (has children)

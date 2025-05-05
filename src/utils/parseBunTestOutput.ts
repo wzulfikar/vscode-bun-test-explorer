@@ -14,13 +14,12 @@ export function parseBunTestOutput(output: string, workspacePath: string): BunTe
   let errorLine = 0;
   let errorColumn = 0;
   let errorFile = '';
-  let inSkippedTestsSection = false;
-  
-  // Keep a map of test paths to their file paths for resolving skipped tests in the summary section
-  const testPathToFileMap = new Map<string, string>();
   
   // Map to store source code line info by file
   const fileLineMap = new Map<string, Map<string, number>>();
+  
+  // Map to track which file each test belongs to
+  const testToFileMap = new Map<string, string>();
 
   // Regular expressions for parsing
   const fileLineRegex = /^([^:]+):$/;
@@ -29,13 +28,16 @@ export function parseBunTestOutput(output: string, workspacePath: string): BunTe
   const testSkipRegex = /^\(skip\)\s+(.*?)(?:\s+\[([0-9.]+)ms\])?$/;
   const errorLocationRegex = /^\s+at\s+.*?\(([^:]+):(\d+):(\d+)\)$/;
   const errorPositionRegex = /\^/;
-  const skippedTestsSectionRegex = /^(\d+) tests skipped:$/;
   
   // Additional regex for extracting error location from the stack trace line
   const anonymousErrorLocationRegex = /at <anonymous> \(([^:]+):(\d+):(\d+)\)/;
   
   // Additional regex for capturing code context lines with line numbers
   const codeLineRegex = /^(\d+) \|(.*)$/;
+
+  // Track skipped tests section marker
+  let inSkippedTestsSection = false;
+  let lastFileBeforeSkippedTests: string | null = null;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -44,19 +46,31 @@ export function parseBunTestOutput(output: string, workspacePath: string): BunTe
     // Skip the first line showing the bun version
     if (line.startsWith('bun test v')) continue;
 
+    // Detect skipped tests section
+    if (line.match(/^\d+ tests skipped:$/)) {
+      inSkippedTestsSection = true;
+      
+      if (currentFile && currentFile.tests.length > 0) {
+        testResults.push(currentFile);
+      }
+      
+      // Create a special file for the skipped tests section
+      const skippedTestsSectionPath = path.join(workspacePath, `${numSkippedTests} tests skipped`);
+      currentFile = {
+        name: skippedTestsSectionPath,
+        tests: [],
+        passed: true
+      };
+      
+      continue;
+    }
+
     // Skip the summary lines
     if (line.match(/^\d+\s+pass$/)) continue;
     if (line.match(/^\d+\s+fail$/)) continue;
     if (line.match(/^\d+\s+skip$/)) continue;
     if (line.match(/^\d+\s+expect\(\) calls$/)) continue;
     if (line.match(/^Ran \d+ tests across \d+ files/)) continue;
-
-    // Check if we've entered the skipped tests summary section
-    const skippedSectionMatch = line.match(skippedTestsSectionRegex);
-    if (skippedSectionMatch) {
-      inSkippedTestsSection = true;
-      continue;
-    }
 
     // Check if we're collecting error message details
     if (collectingError) {
@@ -105,17 +119,23 @@ export function parseBunTestOutput(output: string, workspacePath: string): BunTe
 
     // Check if this is a file line
     const fileMatch = line.match(fileLineRegex);
-    if (fileMatch && !inSkippedTestsSection) {
+    if (fileMatch) {
       // If we were processing a file, add it to the results
       if (currentFile && currentFile.tests.length > 0) {
         testResults.push(currentFile);
       }
+
+      // Reset the skipped tests section flag
+      inSkippedTestsSection = false;
 
       // Start a new file
       const filePath = fileMatch[1].trim();
       const fullPath = filePath.startsWith('/') ?
         filePath :
         path.resolve(workspacePath, filePath);
+        
+      // Remember the last file before skipped tests section
+      lastFileBeforeSkippedTests = fullPath;
 
       currentFile = {
         name: fullPath,
@@ -129,30 +149,8 @@ export function parseBunTestOutput(output: string, workspacePath: string): BunTe
       continue;
     }
 
-    // If we're in the skipped tests section, handle skipped tests differently
-    if (inSkippedTestsSection) {
-      const skipMatch = line.match(testSkipRegex);
-      if (skipMatch) {
-        const testPath = skipMatch[1].trim();
-        
-        // Look up the file this test belongs to
-        const filePath = testPathToFileMap.get(testPath);
-        if (filePath) {
-          // Find the file result
-          const fileResult = testResults.find(file => file.name === filePath);
-          if (fileResult) {
-            // The test might already exist in the file's tests array,
-            // so we don't need to add it again, just ensuring it's marked as skipped
-            // This is just a safeguard - the test should already be properly processed earlier
-          }
-        }
-        
-        continue;
-      }
-    }
-
-    // If we don't have a current file and we're not in the skipped tests section, skip
-    if (!currentFile && !inSkippedTestsSection) continue;
+    // If we don't have a current file, skip
+    if (!currentFile) continue;
 
     // Look for an error position marker line
     if (line.match(errorPositionRegex)) {
@@ -188,9 +186,14 @@ export function parseBunTestOutput(output: string, workspacePath: string): BunTe
 
     // Check if this is a failing test
     const failMatch = line.match(testFailRegex);
-    if (failMatch && !inSkippedTestsSection && currentFile) {
+    if (failMatch) {
       const testPath = failMatch[1].trim();
       const duration = failMatch[2] ? parseFloat(failMatch[2]) : undefined;
+      
+      // In regular file section, store test path to file mapping
+      if (!inSkippedTestsSection) {
+        testToFileMap.set(testPath, currentFile.name);
+      }
 
       // Create a test result with path segments organized in a hierarchy
       addTestWithHierarchy(
@@ -222,9 +225,14 @@ export function parseBunTestOutput(output: string, workspacePath: string): BunTe
 
     // Check if this is a passing test
     const passMatch = line.match(testPassRegex);
-    if (passMatch && !inSkippedTestsSection && currentFile) {
+    if (passMatch) {
       const testPath = passMatch[1].trim();
       const duration = passMatch[2] ? parseFloat(passMatch[2]) : undefined;
+      
+      // In regular file section, store test path to file mapping
+      if (!inSkippedTestsSection) {
+        testToFileMap.set(testPath, currentFile.name);
+      }
 
       // Create a test result with path segments organized in a hierarchy
       addTestWithHierarchy(
@@ -249,12 +257,20 @@ export function parseBunTestOutput(output: string, workspacePath: string): BunTe
 
     // Check if this is a skipped test
     const skipMatch = line.match(testSkipRegex);
-    if (skipMatch && !inSkippedTestsSection && currentFile) {
+    if (skipMatch) {
       const testPath = skipMatch[1].trim();
       const duration = skipMatch[2] ? parseFloat(skipMatch[2]) : undefined;
-
-      // Store the test path to file mapping for resolving skipped tests in the summary section
-      testPathToFileMap.set(testPath, currentFile.name);
+      
+      // Find the correct file for this test in skipped tests section
+      let testFile = currentFile.name;
+      
+      // For skipped tests section, look up the file from our map
+      if (inSkippedTestsSection && testToFileMap.has(testPath)) {
+        testFile = testToFileMap.get(testPath)!;
+      } else if (!inSkippedTestsSection) {
+        // In regular file section, store test path to file mapping
+        testToFileMap.set(testPath, currentFile.name);
+      }
 
       // Create a test result with path segments organized in a hierarchy
       addTestWithHierarchy(
@@ -265,12 +281,12 @@ export function parseBunTestOutput(output: string, workspacePath: string): BunTe
           status: 'skipped',
           duration,
           location: {
-            file: currentFile.name,
+            file: testFile,
             line: 0,  // Will be replaced with actual line number if found
             column: 0
           }
         },
-        fileLineMap.get(currentFile.name)
+        fileLineMap.get(inSkippedTestsSection ? testFile : currentFile.name)
       );
 
       numSkippedTests++;
