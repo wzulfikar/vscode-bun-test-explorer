@@ -1,0 +1,86 @@
+{
+  "name": "vscode-bun-test-explorer",
+  "displayName": "Bun Test Explorer",
+  "description": "Run your Bun tests in the Sidebar of Visual Studio Code",
+  "icon": "icon.png",
+  "author": "Wildan Zulfikar <hey@wzulfikar.com>",
+  "publisher": "wzulfikar",
+  "version": "0.1.2",
+  "preview": true,
+  "license": "MIT",
+  "homepage": "https://github.com/wzulfikar/vscode-bun-test-explorer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wzulfikar/vscode-bun-test-explorer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wzulfikar/vscode-bun-test-explorer/issues"
+  },
+  "categories": [
+    "Other",
+    "Testing"
+  ],
+  "keywords": [
+    "test",
+    "testing",
+    "bun"
+  ],
+  "main": "out/main.js",
+  "scripts": {
+    "clean": "rimraf out *.vsix",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "rebuild": "npm run clean && npm run build",
+    "package": "mkdir -p build && vsce package -o build/vscode-bun-test-explorer.vsix",
+    "publish": "vsce publish",
+    "vscode:prepublish": "tsc"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.12",
+    "@types/jest": "^29.5.14",
+    "@types/vscode": "^1.59.0",
+    "tslint": "^5.12.0",
+    "typescript": "^5.8.3",
+    "vsce": "^1.54.0"
+  },
+  "engines": {
+    "vscode": "^1.59.0"
+  },
+  "activationEvents": [
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescriptreact",
+    "workspaceContains:**/*.{test,spec}.{js,jsx,ts,tsx}"
+  ],
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Bun Test Explorer configuration",
+      "properties": {
+        "bunTestExplorer.logpanel": {
+          "description": "Write diagnotic logs to an output panel.",
+          "scope": "resource",
+          "title": "Log Panel",
+          "type": "boolean"
+        },
+        "bunTestExplorer.logfile": {
+          "description": "Write diagnostic logs to the given file.",
+          "scope": "resource",
+          "title": "Log File",
+          "type": "string"
+        },
+        "bunTestExplorer.pathToBun": {
+          "description": "Override the path to the Bun executable. The default behavior is to attempt to detect common configurations.",
+          "scope": "resource",
+          "type": "string"
+        },
+        "bunTestExplorer.pathToBunConfig": {
+          "description": "Override the path to the Bun config file. The default behavior is to attempt to detect common configurations.",
+          "scope": "resource",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
