@@ -7,7 +7,16 @@ export function isRelatedTestResult(testItem: TestItem, testResult: BunTestResul
     return true;
   }
 
-  // If this node has children, recursively search them
+  // Check if testResult has a tests array (for file result objects)
+  if ('tests' in testResult && Array.isArray(testResult.tests)) {
+    for (const test of testResult.tests) {
+      if (isRelatedTestResult(testItem, test)) {
+        return true;
+      }
+    }
+  }
+
+  // If testResult has children, recursively search them
   if (testResult.children && testResult.children.length > 0) {
     for (const child of testResult.children) {
       if (isRelatedTestResult(testItem, child)) {
@@ -15,5 +24,19 @@ export function isRelatedTestResult(testItem: TestItem, testResult: BunTestResul
       }
     }
   }
+
+  // If testItem has children, check if any of them match the testResult
+  if (testItem.children && testItem.children.size > 0) {
+    let found = false;
+    testItem.children.forEach(child => {
+      if (!found && isRelatedTestResult(child, testResult)) {
+        found = true;
+      }
+    });
+    if (found) {
+      return true;
+    }
+  }
+
   return false;
 }

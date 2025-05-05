@@ -272,7 +272,7 @@ function extractSourceFileLineNumbers(filePath: string, fileLineMap: Map<string,
     
     // Regular expressions to match test definitions
     const describeRegex = /\bdescribe\s*\(\s*["'`]([^"'`]+)["'`]/;
-    const testRegex = /\btest(?:\.(?:skip|failing|only))?\s*\(\s*["'`]([^"'`]+)["'`]/;
+    const testRegex = /\b(?:test|it)(?:\.(?:skip|failing|only))?\s*\(\s*["'`]([^"'`]+)["'`]/;
     
     // Process each line in the file
     for (let i = 0; i < fileLines.length; i++) {

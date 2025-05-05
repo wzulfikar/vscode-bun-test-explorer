@@ -269,11 +269,11 @@ export class BunTestController implements vscode.Disposable {
     // If specific tests are specified to run
     if (request.include) {
       const testLabels = request.include.map(test => test.label);
-      this.log.info(`running specific tests:`, testLabels);
+      this.log.info(`Running specific test:`, testLabels);
       request.include.forEach(test => queue.push(test));
     } else {
-      this.log.info(`running all discovered tests:`, this.testController.items.size);
       // Run all discovered tests
+      this.log.info(`Running all discovered tests:`, this.testController.items.size);
       this.testController.items.forEach(test => queue.push(test));
     }
 
@@ -305,7 +305,7 @@ export class BunTestController implements vscode.Disposable {
     for (const [filePath, tests] of testsByFile.entries()) {
       if (token.isCancellationRequested) break;
 
-      this.log.info('running tests for file:', filePath, tests);
+      this.log.info('Running tests for file:', filePath, tests);
 
       try {
         // Mark tests as running
@@ -462,7 +462,7 @@ export class BunTestController implements vscode.Disposable {
       this.log.info(`testResult:`, testResult.name);
 
       if (!isRelatedTestResult(parent, testResult)) {
-        this.log.warn(`not related test result: ${testResult.name}`);
+        this.log.warn(`unrelated test result: ${testResult.name}. testItem:`, parent);
         continue;
       }
 
@@ -530,10 +530,10 @@ export class BunTestController implements vscode.Disposable {
             // Improved error message formatting
             const errorMessage = testResult.message.trim();
             const messageLines = errorMessage.split('\n');
-            
+
             // Add a separator line for errors
             run.appendOutput(`\r\n${indent}  \x1b[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\x1b[0m`, location);
-            
+
             // Add file location info if available
             if (testResult.location) {
               const relativePath = testItem.uri ? testItem.uri.fsPath.replace(this.workspaceFolder.uri.fsPath + '/', '') : '';
@@ -541,7 +541,7 @@ export class BunTestController implements vscode.Disposable {
               run.appendOutput(`\r\n${indent}  \x1b[2m${locationInfo}\x1b[0m`, location);
               run.appendOutput(`\r\n`, location);
             }
-            
+
             // Format each line of the error message with proper indentation
             for (const line of messageLines) {
               if (line.includes('Expected:')) {
@@ -563,7 +563,7 @@ export class BunTestController implements vscode.Disposable {
                 run.appendOutput(`\r\n${indent}  ${line}`, location);
               }
             }
-            
+
             // Add a closing separator line
             run.appendOutput(`\r\n${indent}  \x1b[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\x1b[0m`, location);
           }
