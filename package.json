@@ -35,6 +35,9 @@
     "publish": "bunx vsce publish",
     "vscode:prepublish": "tsc"
   },
+  "dependencies": {
+    "tslib": "^2.8.1"
+  },
   "devDependencies": {
     "@types/bun": "^1.2.12",
     "@types/jest": "^29.5.14",
