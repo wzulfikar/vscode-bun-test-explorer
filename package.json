@@ -31,8 +31,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "rebuild": "npm run clean && npm run build",
-    "package": "mkdir -p build && vsce package -o build/vscode-bun-test-explorer.vsix",
-    "publish": "vsce publish",
+    "package": "mkdir -p build && bunx vsce package -o build/vscode-bun-test-explorer.vsix",
+    "publish": "bunx vsce publish",
     "vscode:prepublish": "tsc"
   },
   "devDependencies": {
@@ -40,8 +40,7 @@
     "@types/jest": "^29.5.14",
     "@types/vscode": "^1.59.0",
     "tslint": "^5.12.0",
-    "typescript": "^5.8.3",
-    "vsce": "^1.54.0"
+    "typescript": "^5.8.3"
   },
   "engines": {
     "vscode": "^1.59.0"
