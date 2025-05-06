@@ -5,7 +5,7 @@
   "icon": "icon.png",
   "author": "Wildan Zulfikar <hey@wzulfikar.com>",
   "publisher": "wzulfikar",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "preview": true,
   "license": "MIT",
   "homepage": "https://github.com/wzulfikar/vscode-bun-test-explorer",
